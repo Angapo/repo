@@ -1,0 +1,17 @@
+{
+    "New Script 1": {
+        "code": "-- New script code here",
+        "version": "1.0",
+        "tag": "General"
+    },
+    "New Script 2": {
+        "code": "-- New script code here",
+        "version": "1.0",
+        "tag": "General"
+    },
+    "New Script 3": {
+        "code": "-- New script code here",
+        "version": "1.0",
+        "tag": "General"
+    }
+}
