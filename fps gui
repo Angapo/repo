@@ -1,0 +1,33 @@
+-- FPS GUI สร้างโดยสคริปต์
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+-- GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "FPSGui"
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+
+local Text = Instance.new("TextLabel")
+Text.Size = UDim2.new(0, 180, 0, 40)
+Text.Position = UDim2.new(0, 10, 0, 10)
+Text.BackgroundTransparency = 0.3
+Text.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Text.TextColor3 = Color3.fromRGB(0, 255, 0)
+Text.Font = Enum.Font.Code
+Text.TextSize = 22
+Text.Text = "FPS: ..."
+Text.Parent = ScreenGui
+
+-- คำนวณ FPS
+local last = tick()
+local fps = 60
+
+RunService.RenderStepped:Connect(function()
+    local now = tick()
+    fps = 1 / (now - last)
+    last = now
+
+    Text.Text = "FPS: " .. math.floor(fps)
+end)
