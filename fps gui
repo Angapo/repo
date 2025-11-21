@@ -1,33 +1,39 @@
--- FPS GUI สร้างโดยสคริปต์
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
+local ReGui = loadstring(game:HttpGet('https://raw.githubusercontent.com/depthso/Dear-ReGui/refs/heads/main/ReGui.lua'))()
 
--- GUI
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "FPSGui"
-ScreenGui.IgnoreGuiInset = true
-ScreenGui.ResetOnSpawn = false
-ScreenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+local Window = ReGui:TabsWindow({
+    Title = "Performance",
+    Size = UDim2.fromOffset(300, 200),
+})
+Window:Mount()
 
-local Text = Instance.new("TextLabel")
-Text.Size = UDim2.new(0, 180, 0, 40)
-Text.Position = UDim2.new(0, 10, 0, 10)
-Text.BackgroundTransparency = 0.3
-Text.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-Text.TextColor3 = Color3.fromRGB(0, 255, 0)
-Text.Font = Enum.Font.Code
-Text.TextSize = 22
-Text.Text = "FPS: ..."
-Text.Parent = ScreenGui
+-- สร้าง Tab
+local FPSTab = Window:CreateTab({ Name = "FPS" })
 
--- คำนวณ FPS
+-- Label แสดง FPS
+local FPSLabel = FPSTab:Label({
+    Text = "FPS: 0"
+})
+
+-- Checkbox สำหรับเปิด/ปิดการอัปเดต FPS
+local Enabled = true
+
+FPSTab:Checkbox({
+    Value = true,
+    Label = "Enable FPS Counter",
+    Callback = function(value)
+        Enabled = value
+    end
+})
+
+-- อัปเดต FPS ทุกเฟรม
 local last = tick()
-local fps = 60
 
 RunService.RenderStepped:Connect(function()
+    if not Enabled then return end
+
     local now = tick()
-    fps = 1 / (now - last)
+    local fps = 1 / (now - last)
     last = now
 
-    Text.Text = "FPS: " .. math.floor(fps)
+    FPSLabel:SetText("FPS: " .. math.floor(fps))
 end)
