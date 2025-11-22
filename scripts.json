@@ -1,0 +1,10 @@
+{
+    "abc": {
+        "name": "Speed Hack",
+        "script": "print('speed hack run!')"
+    },
+    "xyz": {
+        "name": "ESP Script",
+        "script": "print('ESP Enabled!')"
+    }
+}
