@@ -3,8 +3,4 @@
         "name": "Noclip",
         "script": "loadstring(game:HttpGet(\"https://raw.githubusercontent.com/Angapo/repo/refs/heads/main/Noclipgui.lua\"))()"
     },
-    "2": {
-        "name": "ESP",
-        "script": "loadstring(game:HttpGet(\"https://raw.githubusercontent.com/Angapo/repo/refs/heads/main/esp.lua\"))()"
-    }
 }
