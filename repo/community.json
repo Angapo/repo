@@ -1,0 +1,48 @@
+[
+    {
+        "Title": "Epic Dance",
+        "AnimationId-r6": "rbxassetid://507770239",
+        "AnimationId-r15": "rbxassetid://507770240",
+        "Speed": 1,
+        "Weight": 1,
+        "Loop": true,
+        "Priority": 2,
+        "Rating": 4.9,
+        "Downloads": 15000,
+        "Image": "rbxassetid://1234567",
+        "Description": "Professional dance animation optimized for both R6 and R15 rigs!"
+    },
+    {
+        "Title": "Ninja Stealth",
+        "AnimationId-r15": "rbxassetid://656117878",
+        "Speed": 1.2,
+        "Weight": 1,
+        "Loop": true,
+        "Priority": 2,
+        "Rating": 5.0,
+        "Downloads": 8500,
+        "Description": "Advanced R15-only stealth animation with complex joint movements"
+    },
+    {
+        "Title": "Classic Wave",
+        "AnimationId-r6": "rbxassetid://128777973",
+        "Speed": 1,
+        "Weight": 1,
+        "Loop": false,
+        "Priority": 2,
+        "Rating": 4.3,
+        "Downloads": 25000,
+        "Description": "Simple friendly wave animation for R6 avatars"
+    },
+    {
+        "Title": "Universal Jump",
+        "AnimationId": "rbxassetid://125750702",
+        "Speed": 1,
+        "Weight": 1,
+        "Loop": false,
+        "Priority": 2,
+        "Rating": 4.7,
+        "Downloads": 30000,
+        "Description": "Works on any rig type - basic jump animation"
+    }
+]

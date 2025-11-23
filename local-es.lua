@@ -368,7 +368,7 @@ local AllScripts = {
     },
     ["2"] = {
         name = "FE Animation GUI",
-        script = [[loadstring(game:HttpGet('https://raw.githubusercontent.com/Angapo/repo/refs/heads/main/esp.lua'))()]]
+        script = [[loadstring(game:HttpGet('https://github.com/Angapo/repo/raw/refs/heads/main/r6-troll/FE-Animation-GUI.lua'))()]]
     },
     -- Add more scripts here
 }
