@@ -1,7 +1,3 @@
---R6 animations for R15 Characters without Reanimation! 
---This is a script that roblox made (Script location: content\avatar\unification\humanoidClassicAnimate.lua) but I edited for it to work with exploits and etc.
---Edited by Invisible_#3657 :3
-
 local plr = game:GetService("Players").LocalPlayer
 
 function RunCustomAnimation(Char)
