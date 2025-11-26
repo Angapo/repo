@@ -1,7 +1,10 @@
-local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
 
 local player = Players.LocalPlayer
 
@@ -26,476 +29,624 @@ player.CharacterAdded:Connect(function()
 end)
 
 ------------------------------------------------------------
--- Window
+-- Window Creation
 ------------------------------------------------------------
 
-local Window = Rayfield:CreateWindow({
-    Name = "ALL Game Version 1.1",
-    LoadingTitle = "Loading...",
-    LoadingSubtitle = "By 🦌 Team Dear",
-    ConfigurationSaving = false
+local Window = Fluent:CreateWindow({
+    Title = "ALL Game Hub " .. Fluent.Version,
+    SubTitle = "by 🦌 Team Dear",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true,
+    Theme = "Darker",
+    MinimizeKey = Enum.KeyCode.LeftControl
 })
 
--- 🎨 Theme system
-local CurrentTheme = 1
-
-local Themes = {
-    -- Theme 1: Cyberpunk (Purple & Pink)
-    [1] = {
-        name = "Cyberpunk",
-        TextColor = Color3.fromRGB(255, 255, 255),
-        Background = Color3.fromRGB(20, 10, 30),
-        Topbar = Color3.fromRGB(40, 20, 60),
-        Shadow = Color3.fromRGB(10, 5, 15),
-        NotificationBackground = Color3.fromRGB(30, 15, 45),
-        NotificationActionsBackground = Color3.fromRGB(255, 100, 200),
-        TabBackground = Color3.fromRGB(80, 40, 120),
-        TabStroke = Color3.fromRGB(120, 60, 180),
-        TabBackgroundSelected = Color3.fromRGB(200, 100, 255),
-        TabTextColor = Color3.fromRGB(255, 255, 255),
-        SelectedTabTextColor = Color3.fromRGB(20, 10, 30),
-        ElementBackground = Color3.fromRGB(35, 20, 50),
-        ElementBackgroundHover = Color3.fromRGB(50, 30, 70),
-        SecondaryElementBackground = Color3.fromRGB(25, 15, 40),
-        ElementStroke = Color3.fromRGB(100, 50, 150),
-        SecondaryElementStroke = Color3.fromRGB(80, 40, 120),
-        SliderBackground = Color3.fromRGB(150, 50, 200),
-        SliderProgress = Color3.fromRGB(200, 100, 255),
-        SliderStroke = Color3.fromRGB(255, 150, 255),
-        ToggleBackground = Color3.fromRGB(30, 15, 45),
-        ToggleEnabled = Color3.fromRGB(200, 50, 255),
-        ToggleDisabled = Color3.fromRGB(80, 40, 100),
-        ToggleEnabledStroke = Color3.fromRGB(255, 100, 255),
-        ToggleDisabledStroke = Color3.fromRGB(100, 50, 120),
-        ToggleEnabledOuterStroke = Color3.fromRGB(150, 75, 180),
-        ToggleDisabledOuterStroke = Color3.fromRGB(60, 30, 80),
-        DropdownSelected = Color3.fromRGB(50, 30, 70),
-        DropdownUnselected = Color3.fromRGB(30, 15, 45),
-        InputBackground = Color3.fromRGB(30, 15, 45),
-        InputStroke = Color3.fromRGB(120, 60, 180),
-        PlaceholderColor = Color3.fromRGB(200, 150, 255)
-    },
-
-    -- Theme 2: Ocean Blue
-    [2] = {
-        name = "Ocean Blue",
-        TextColor = Color3.fromRGB(240, 250, 255),
-        Background = Color3.fromRGB(10, 25, 35),
-        Topbar = Color3.fromRGB(15, 40, 55),
-        Shadow = Color3.fromRGB(5, 15, 25),
-        NotificationBackground = Color3.fromRGB(15, 35, 50),
-        NotificationActionsBackground = Color3.fromRGB(100, 200, 255),
-        TabBackground = Color3.fromRGB(30, 70, 100),
-        TabStroke = Color3.fromRGB(50, 120, 160),
-        TabBackgroundSelected = Color3.fromRGB(100, 200, 255),
-        TabTextColor = Color3.fromRGB(240, 250, 255),
-        SelectedTabTextColor = Color3.fromRGB(10, 25, 35),
-        ElementBackground = Color3.fromRGB(20, 45, 65),
-        ElementBackgroundHover = Color3.fromRGB(30, 60, 85),
-        SecondaryElementBackground = Color3.fromRGB(15, 35, 50),
-        ElementStroke = Color3.fromRGB(40, 100, 140),
-        SecondaryElementStroke = Color3.fromRGB(30, 70, 100),
-        SliderBackground = Color3.fromRGB(50, 150, 200),
-        SliderProgress = Color3.fromRGB(100, 200, 255),
-        SliderStroke = Color3.fromRGB(150, 220, 255),
-        ToggleBackground = Color3.fromRGB(15, 35, 50),
-        ToggleEnabled = Color3.fromRGB(0, 180, 255),
-        ToggleDisabled = Color3.fromRGB(50, 80, 100),
-        ToggleEnabledStroke = Color3.fromRGB(100, 220, 255),
-        ToggleDisabledStroke = Color3.fromRGB(70, 100, 120),
-        ToggleEnabledOuterStroke = Color3.fromRGB(80, 140, 180),
-        ToggleDisabledOuterStroke = Color3.fromRGB(40, 60, 80),
-        DropdownSelected = Color3.fromRGB(30, 60, 85),
-        DropdownUnselected = Color3.fromRGB(15, 35, 50),
-        InputBackground = Color3.fromRGB(15, 35, 50),
-        InputStroke = Color3.fromRGB(50, 120, 160),
-        PlaceholderColor = Color3.fromRGB(150, 200, 230)
-    },
-
-    -- Theme 3: Sunset
-    [3] = {
-        name = "Sunset",
-        TextColor = Color3.fromRGB(255, 250, 240),
-        Background = Color3.fromRGB(30, 15, 10),
-        Topbar = Color3.fromRGB(50, 25, 15),
-        Shadow = Color3.fromRGB(20, 10, 5),
-        NotificationBackground = Color3.fromRGB(40, 20, 10),
-        NotificationActionsBackground = Color3.fromRGB(255, 150, 80),
-        TabBackground = Color3.fromRGB(100, 50, 30),
-        TabStroke = Color3.fromRGB(150, 80, 50),
-        TabBackgroundSelected = Color3.fromRGB(255, 150, 80),
-        TabTextColor = Color3.fromRGB(255, 250, 240),
-        SelectedTabTextColor = Color3.fromRGB(30, 15, 10),
-        ElementBackground = Color3.fromRGB(45, 25, 15),
-        ElementBackgroundHover = Color3.fromRGB(60, 35, 20),
-        SecondaryElementBackground = Color3.fromRGB(35, 20, 10),
-        ElementStroke = Color3.fromRGB(120, 60, 30),
-        SecondaryElementStroke = Color3.fromRGB(90, 45, 25),
-        SliderBackground = Color3.fromRGB(200, 100, 50),
-        SliderProgress = Color3.fromRGB(255, 150, 80),
-        SliderStroke = Color3.fromRGB(255, 180, 120),
-        ToggleBackground = Color3.fromRGB(40, 20, 10),
-        ToggleEnabled = Color3.fromRGB(255, 120, 50),
-        ToggleDisabled = Color3.fromRGB(80, 50, 30),
-        ToggleEnabledStroke = Color3.fromRGB(255, 160, 100),
-        ToggleDisabledStroke = Color3.fromRGB(100, 60, 40),
-        ToggleEnabledOuterStroke = Color3.fromRGB(150, 80, 50),
-        ToggleDisabledOuterStroke = Color3.fromRGB(60, 35, 20),
-        DropdownSelected = Color3.fromRGB(60, 35, 20),
-        DropdownUnselected = Color3.fromRGB(40, 20, 10),
-        InputBackground = Color3.fromRGB(40, 20, 10),
-        InputStroke = Color3.fromRGB(150, 80, 50),
-        PlaceholderColor = Color3.fromRGB(200, 150, 120)
-    },
-
-    -- Theme 4: Green Forest
-    [4] = {
-        name = "Green Forest",
-        TextColor = Color3.fromRGB(240, 255, 245),
-        Background = Color3.fromRGB(10, 25, 15),
-        Topbar = Color3.fromRGB(15, 40, 25),
-        Shadow = Color3.fromRGB(5, 15, 10),
-        NotificationBackground = Color3.fromRGB(15, 35, 25),
-        NotificationActionsBackground = Color3.fromRGB(100, 255, 150),
-        TabBackground = Color3.fromRGB(30, 80, 50),
-        TabStroke = Color3.fromRGB(50, 130, 80),
-        TabBackgroundSelected = Color3.fromRGB(100, 255, 150),
-        TabTextColor = Color3.fromRGB(240, 255, 245),
-        SelectedTabTextColor = Color3.fromRGB(10, 25, 15),
-        ElementBackground = Color3.fromRGB(20, 45, 30),
-        ElementBackgroundHover = Color3.fromRGB(30, 60, 40),
-        SecondaryElementBackground = Color3.fromRGB(15, 35, 25),
-        ElementStroke = Color3.fromRGB(40, 100, 60),
-        SecondaryElementStroke = Color3.fromRGB(30, 70, 45),
-        SliderBackground = Color3.fromRGB(50, 180, 100),
-        SliderProgress = Color3.fromRGB(100, 255, 150),
-        SliderStroke = Color3.fromRGB(150, 255, 200),
-        ToggleBackground = Color3.fromRGB(15, 35, 25),
-        ToggleEnabled = Color3.fromRGB(0, 220, 120),
-        ToggleDisabled = Color3.fromRGB(50, 80, 60),
-        ToggleEnabledStroke = Color3.fromRGB(100, 255, 170),
-        ToggleDisabledStroke = Color3.fromRGB(70, 100, 80),
-        ToggleEnabledOuterStroke = Color3.fromRGB(80, 150, 110),
-        ToggleDisabledOuterStroke = Color3.fromRGB(40, 60, 50),
-        DropdownSelected = Color3.fromRGB(30, 60, 40),
-        DropdownUnselected = Color3.fromRGB(15, 35, 25),
-        InputBackground = Color3.fromRGB(15, 35, 25),
-        InputStroke = Color3.fromRGB(50, 130, 80),
-        PlaceholderColor = Color3.fromRGB(150, 230, 180)
-    },
-
-    -- Theme 5: Royal Gold
-    [5] = {
-        name = "Royal Gold",
-        TextColor = Color3.fromRGB(255, 240, 200),
-        Background = Color3.fromRGB(15, 15, 15),
-        Topbar = Color3.fromRGB(25, 25, 25),
-        Shadow = Color3.fromRGB(10, 10, 10),
-        NotificationBackground = Color3.fromRGB(20, 20, 20),
-        NotificationActionsBackground = Color3.fromRGB(255, 215, 100),
-        TabBackground = Color3.fromRGB(60, 50, 30),
-        TabStroke = Color3.fromRGB(120, 100, 50),
-        TabBackgroundSelected = Color3.fromRGB(255, 215, 100),
-        TabTextColor = Color3.fromRGB(255, 240, 200),
-        SelectedTabTextColor = Color3.fromRGB(15, 15, 15),
-        ElementBackground = Color3.fromRGB(30, 30, 30),
-        ElementBackgroundHover = Color3.fromRGB(40, 40, 35),
-        SecondaryElementBackground = Color3.fromRGB(20, 20, 20),
-        ElementStroke = Color3.fromRGB(100, 85, 40),
-        SecondaryElementStroke = Color3.fromRGB(70, 60, 30),
-        SliderBackground = Color3.fromRGB(180, 150, 70),
-        SliderProgress = Color3.fromRGB(255, 215, 100),
-        SliderStroke = Color3.fromRGB(255, 235, 150),
-        ToggleBackground = Color3.fromRGB(20, 20, 20),
-        ToggleEnabled = Color3.fromRGB(255, 200, 50),
-        ToggleDisabled = Color3.fromRGB(80, 70, 50),
-        ToggleEnabledStroke = Color3.fromRGB(255, 225, 120),
-        ToggleDisabledStroke = Color3.fromRGB(100, 85, 60),
-        ToggleEnabledOuterStroke = Color3.fromRGB(150, 130, 70),
-        ToggleDisabledOuterStroke = Color3.fromRGB(50, 45, 35),
-        DropdownSelected = Color3.fromRGB(40, 40, 35),
-        DropdownUnselected = Color3.fromRGB(20, 20, 20),
-        InputBackground = Color3.fromRGB(20, 20, 20),
-        InputStroke = Color3.fromRGB(120, 100, 50),
-        PlaceholderColor = Color3.fromRGB(200, 180, 130)
-    }
+local Tabs = {
+    Home = Window:AddTab({ Title = "Home", Icon = "home" }),
+    FE = Window:AddTab({ Title = "FE Scripts", Icon = "zap" }),
+    Admin = Window:AddTab({ Title = "Admin", Icon = "shield" }),
+    Hub = Window:AddTab({ Title = "Hub", Icon = "box" }),
+    R6Troll = Window:AddTab({ Title = "R6 Troll", Icon = "smile" }),
+    R15Troll = Window:AddTab({ Title = "R15 Troll", Icon = "smile" }),
+    SaveScripts = Window:AddTab({ Title = "Save Scripts", Icon = "save" }),
+    DeleteScripts = Window:AddTab({ Title = "Delete Scripts", Icon = "trash-2" }),
+    Info = Window:AddTab({ Title = "Info", Icon = "info" }),
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 }
 
-local function ApplyTheme(themeIndex)
-    CurrentTheme = themeIndex
-    Window.ModifyTheme(Themes[themeIndex])
-    Rayfield:Notify({
-        Title = "Theme Changed",
-        Content = "Changed to " .. Themes[themeIndex].name,
-        Duration = 2
+------------------------------------------------------------
+-- Script Storage System
+------------------------------------------------------------
+
+local ScriptCategories = {
+    FE = {},
+    Admin = {},
+    Hub = {},
+    R6Troll = {},
+    R15Troll = {}
+}
+
+local SaveFileName = "FluentScriptHub_" .. tostring(game.PlaceId) .. ".json"
+
+local function SaveScriptData()
+    local success, result = pcall(function()
+        if writefile then
+            writefile(SaveFileName, HttpService:JSONEncode(ScriptCategories))
+        end
+    end)
+    if not success then
+        print("Failed to save scripts:", result)
+    end
+end
+
+local function LoadScriptData()
+    local success, result = pcall(function()
+        if isfile and readfile and isfile(SaveFileName) then
+            local data = HttpService:JSONDecode(readfile(SaveFileName))
+            if data then
+                ScriptCategories = data
+                return true
+            end
+        end
+        return false
+    end)
+    return success and result
+end
+
+local function ExecuteScript(scriptCode, scriptName)
+    local success, err = pcall(function()
+        loadstring(scriptCode)()
+    end)
+    
+    if success then
+        Fluent:Notify({
+            Title = "Running Script",
+            Content = "Running: " .. scriptName,
+            Duration = 2
+        })
+    else
+        Fluent:Notify({
+            Title = "Error",
+            Content = "Failed: " .. tostring(err),
+            Duration = 3
+        })
+    end
+end
+
+local function AddScriptToCategory(category, name, desc, script)
+    table.insert(ScriptCategories[category], {
+        name = name,
+        desc = desc,
+        script = script
+    })
+    SaveScriptData()
+end
+
+local function RemoveScriptFromCategory(category, index)
+    table.remove(ScriptCategories[category], index)
+    SaveScriptData()
+end
+
+local function CreateScriptButton(tab, name, desc, script)
+    tab:AddButton({
+        Title = name,
+        Description = desc or "Click to execute",
+        Callback = function()
+            ExecuteScript(script, name)
+        end
     })
 end
 
--- Apply default theme
-Window.ModifyTheme(Themes[CurrentTheme])
+------------------------------------------------------------
+-- Load saved data first
+------------------------------------------------------------
+local dataLoaded = LoadScriptData()
+
+-- Initialize with default scripts if no data loaded
+if not dataLoaded or #ScriptCategories.FE == 0 then
+    ScriptCategories.FE = {
+        {
+            name = "Coolkid GUI",
+            desc = "FE GUI with multiple features",
+            script = [[loadstring(game:HttpGet('https://github.com/Angapo/repo/raw/refs/heads/main/hub/coolkid.lua'))()]]
+        },
+        {
+            name = "FE Ultimate Trolling GUI",
+            desc = "Ultimate trolling script",
+            script = [[loadstring(game:HttpGet('https://raw.githubusercontent.com/Angapo/repo/refs/heads/main/hub/FE%20Ultimate%20Trolling%20GUI%20Script.lua'))()]]
+        }
+    }
+end
+
+if not dataLoaded or #ScriptCategories.Admin == 0 then
+    ScriptCategories.Admin = {
+        {
+            name = "Infinite Yield",
+            desc = "Popular admin commands",
+            script = [[loadstring(game:HttpGet('https://raw.githubusercontent.com/edgeiy/infiniteyield/master/source'))()]]
+        },
+        {
+            name = "CMD Admin Script",
+            desc = "Advanced command system",
+            script = [[loadstring(game:HttpGet('https://raw.githubusercontent.com/lxte/cmd/main/main.lua'))()]]
+        }
+    }
+end
+
+if not dataLoaded or #ScriptCategories.Hub == 0 then
+    ScriptCategories.Hub = {
+        {
+            name = "Noclip",
+            desc = "Walk through walls",
+            script = [[loadstring(game:HttpGet('https://raw.githubusercontent.com/Angapo/repo/refs/heads/main/Noclipgui.lua'))()]]
+        },
+        {
+            name = "ESP",
+            desc = "See players through walls",
+            script = [[loadstring(game:HttpGet('https://raw.githubusercontent.com/Angapo/repo/refs/heads/main/esp.lua'))()]]
+        }
+    }
+end
+
+if not dataLoaded or #ScriptCategories.R6Troll == 0 then
+    ScriptCategories.R6Troll = {
+        {
+            name = "Jerk Off Tool",
+            desc = "R6 animation tool",
+            script = [[loadstring(game:HttpGet('https://pastefy.app/slawnvcTT/raw'))()]]
+        },
+        {
+            name = "FE Animation GUI",
+            desc = "R6 animation player",
+            script = [[loadstring(game:HttpGet('https://github.com/Angapo/repo/raw/refs/heads/main/r6-troll/FE-Animation-GUI.lua'))()]]
+        }
+    }
+end
+
+if not dataLoaded or #ScriptCategories.R15Troll == 0 then
+    ScriptCategories.R15Troll = {
+        {
+            name = "Jerk Off Tool",
+            desc = "R15 animation tool",
+            script = [[loadstring(game:HttpGet('https://pastefy.app/YZoglOyJ/raw'))()]]
+        },
+        {
+            name = "FE R15 Animation Player",
+            desc = "R15 animation player",
+            script = [[loadstring(game:HttpGet('https://raw.githubusercontent.com/Angapo/repo/refs/heads/main/r15-troll/FE-R15-Animation-Player.lua'))()]]
+        }
+    }
+end
+
+SaveScriptData()
 
 ------------------------------------------------------------
 -- Home Tab
 ------------------------------------------------------------
-local HomeTab = Window:CreateTab("Home", "home")
 
-HomeTab:CreateLabel("Hello " .. player.Name .. "!")
-HomeTab:CreateLabel("Welcome to ALL Game")
-HomeTab:CreateLabel("Version 1.1")
+Tabs.Home:AddParagraph({
+    Title = "Welcome!",
+    Content = "Hello " .. player.Name .. "!\nWelcome to ALL Game Hub v2.0"
+})
 
-HomeTab:CreateButton({
-    Name = "Teleport to New Game",
+Tabs.Home:AddParagraph({
+    Title = "Features",
+    Content = "• All scripts are auto-saved\n• Save custom scripts to any tab\n• Delete scripts with confirmation\n• Clean and organized interface"
+})
+
+Tabs.Home:AddButton({
+    Title = "Rejoin Server",
+    Description = "Teleport back to current server",
     Callback = function()
         TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, player)
     end
 })
 
-------------------------------------------------------------
--- Player Tab
-------------------------------------------------------------
-
-local PlayerTab = Window:CreateTab("Player", "scan-eye")
-
-WalkSlider = PlayerTab:CreateSlider({
-    Name = "Walk Speed",
-    Range = {0, 999},
-    Increment = 1,
-    CurrentValue = SavedSpeed,
-    Callback = function(value)
-        SavedSpeed = value
-        humanoid.WalkSpeed = value
-    end
-})
-
-PlayerTab:CreateButton({
-    Name = "Reset Walk Speed",
+Tabs.Home:AddButton({
+    Title = "Convert R15 to R6",
+    Description = "Change your character rig",
     Callback = function()
-        SavedSpeed = 16
-        humanoid.WalkSpeed = 16
-        WalkSlider:Set(16)
-
-        Rayfield:Notify({
-            Title = "Reset",
-            Content = "Walk speed reset to 16",
-            Duration = 2
-        })
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Angapo/repo/refs/heads/main/hub/r15-r6.lua", true))()
     end
 })
 
-JumpSlider = PlayerTab:CreateSlider({
-    Name = "Jump Power",
-    Range = {0, 999},
-    Increment = 1,
-    CurrentValue = SavedJump,
-    Callback = function(value)
-        SavedJump = value
-        humanoid.JumpPower = value
-    end
+------------------------------------------------------------
+-- FE Tab
+------------------------------------------------------------
+
+Tabs.FE:AddParagraph({
+    Title = "FE Scripts",
+    Content = "Front-End scripts that work without admin"
 })
 
-PlayerTab:CreateButton({
-    Name = "Reset Jump Power",
-    Callback = function()
-        SavedJump = 50
-        humanoid.JumpPower = 50
-        JumpSlider:Set(50)
+for index, info in ipairs(ScriptCategories.FE) do
+    CreateScriptButton(Tabs.FE, info.name, info.desc, info.script)
+end
 
-        Rayfield:Notify({
-            Title = "Reset",
-            Content = "Jump power reset to 50",
-            Duration = 2
-        })
-    end
+------------------------------------------------------------
+-- Admin Tab
+------------------------------------------------------------
+
+Tabs.Admin:AddParagraph({
+    Title = "Admin Scripts",
+    Content = "Administrative command scripts"
 })
+
+for index, info in ipairs(ScriptCategories.Admin) do
+    CreateScriptButton(Tabs.Admin, info.name, info.desc, info.script)
+end
 
 ------------------------------------------------------------
 -- Hub Tab
 ------------------------------------------------------------
 
-local HubTab = Window:CreateTab("Hub","library-big")
+Tabs.Hub:AddParagraph({
+    Title = "Hub Scripts",
+    Content = "General utility scripts"
+})
 
--- ⭐ Scripts stored directly in code
-local AllScripts = {
-    ["1"] = {
-        name = "Noclip",
-        script = [[loadstring(game:HttpGet('https://raw.githubusercontent.com/Angapo/repo/refs/heads/main/Noclipgui.lua'))()]]
-    },
-    ["2"] = {
-        name = "ESP",
-        script = [[loadstring(game:HttpGet('https://raw.githubusercontent.com/Angapo/repo/refs/heads/main/esp.lua'))()]]
-    },
-    -- Add more scripts here
-}
-
-for id, info in pairs(AllScripts) do
-    HubTab:CreateButton({
-        Name = info.name or tostring(id),
-        Callback = function()
-            if info.script then
-                local success, err = pcall(function()
-                    loadstring(info.script)()
-                end)
-                
-                if success then
-                    Rayfield:Notify({
-                        Title = "Running Script",
-                        Content = "Running: " .. (info.name or tostring(id)),
-                        Duration = 2
-                    })
-                else
-                    Rayfield:Notify({
-                        Title = "Error",
-                        Content = "Failed to run script",
-                        Duration = 3
-                    })
-                end
-            end
-        end
-    })
+for index, info in ipairs(ScriptCategories.Hub) do
+    CreateScriptButton(Tabs.Hub, info.name, info.desc, info.script)
 end
 
 ------------------------------------------------------------
--- R6 troll
+-- R6 Troll Tab
 ------------------------------------------------------------
 
-local HubTab = Window:CreateTab("R6 troll","lollipop")
+Tabs.R6Troll:AddParagraph({
+    Title = "R6 Troll Scripts",
+    Content = "Scripts for R6 character rigs"
+})
 
--- ⭐ Scripts stored directly in code
-local AllScripts = {
-    ["1"] = {
-        name = "jerk off - tool",
-        script = [[loadstring(game:HttpGet('https://pastefy.app/slawnvcTT/raw'))()]]
-    },
-    ["2"] = {
-        name = "FE Animation GUI",
-        script = [[loadstring(game:HttpGet('https://github.com/Angapo/repo/raw/refs/heads/main/r6-troll/FE-Animation-GUI.lua'))()]]
-    },
-    -- Add more scripts here
-}
-
-for id, info in pairs(AllScripts) do
-    HubTab:CreateButton({
-        Name = info.name or tostring(id),
-        Callback = function()
-            if info.script then
-                local success, err = pcall(function()
-                    loadstring(info.script)()
-                end)
-                
-                if success then
-                    Rayfield:Notify({
-                        Title = "Running Script",
-                        Content = "Running: " .. (info.name or tostring(id)),
-                        Duration = 2
-                    })
-                else
-                    Rayfield:Notify({
-                        Title = "Error",
-                        Content = "Failed to run script",
-                        Duration = 3
-                    })
-                end
-            end
-        end
-    })
+for index, info in ipairs(ScriptCategories.R6Troll) do
+    CreateScriptButton(Tabs.R6Troll, info.name, info.desc, info.script)
 end
 
 ------------------------------------------------------------
--- R15 troll
+-- R15 Troll Tab
 ------------------------------------------------------------
 
-local HubTab = Window:CreateTab("R15 troll","lollipop")
+Tabs.R15Troll:AddParagraph({
+    Title = "R15 Troll Scripts",
+    Content = "Scripts for R15 character rigs"
+})
 
--- ⭐ Scripts stored directly in code
-local AllScripts = {
-    ["1"] = {
-        name = "jerk off - tool",
-        script = [[loadstring(game:HttpGet('https://pastefy.app/YZoglOyJ/raw'))()]]
-    },
-    ["2"] = {
-        name = "ESP",
-        script = [[loadstring(game:HttpGet('https://raw.githubusercontent.com/Angapo/repo/refs/heads/main/esp.lua'))()]]
-    },
-    -- Add more scripts here
-}
+for index, info in ipairs(ScriptCategories.R15Troll) do
+    CreateScriptButton(Tabs.R15Troll, info.name, info.desc, info.script)
+end
 
-for id, info in pairs(AllScripts) do
-    HubTab:CreateButton({
-        Name = info.name or tostring(id),
-        Callback = function()
-            if info.script then
-                local success, err = pcall(function()
-                    loadstring(info.script)()
-                end)
-                
-                if success then
-                    Rayfield:Notify({
-                        Title = "Running Script",
-                        Content = "Running: " .. (info.name or tostring(id)),
-                        Duration = 2
-                    })
-                else
-                    Rayfield:Notify({
-                        Title = "Error",
-                        Content = "Failed to run script",
+------------------------------------------------------------
+-- Save Scripts Tab (New System)
+------------------------------------------------------------
+
+Tabs.SaveScripts:AddParagraph({
+    Title = "Save Custom Scripts",
+    Content = "Add your own scripts to any category"
+})
+
+local SaveScriptName = ""
+local SaveScriptDesc = ""
+local SaveScriptCode = ""
+local SelectedCategory = "FE"
+
+Tabs.SaveScripts:AddInput("SaveName", {
+    Title = "Script Name",
+    Default = "",
+    Placeholder = "Enter script name...",
+    Callback = function(value)
+        SaveScriptName = value
+    end
+})
+
+Tabs.SaveScripts:AddInput("SaveDesc", {
+    Title = "Description",
+    Default = "",
+    Placeholder = "Enter description...",
+    Callback = function(value)
+        SaveScriptDesc = value
+    end
+})
+
+Tabs.SaveScripts:AddInput("SaveCode", {
+    Title = "Script Code",
+    Default = "",
+    Placeholder = "loadstring(game:HttpGet('URL'))()...",
+    Callback = function(value)
+        SaveScriptCode = value
+    end
+})
+
+Tabs.SaveScripts:AddDropdown("CategoryDropdown", {
+    Title = "Select Category",
+    Values = {"FE", "Admin", "Hub", "R6Troll", "R15Troll"},
+    Default = 1,
+    Callback = function(value)
+        SelectedCategory = value
+    end
+})
+
+Tabs.SaveScripts:AddButton({
+    Title = "Save Script",
+    Description = "Add script to selected category",
+    Callback = function()
+        if SaveScriptName ~= "" and SaveScriptCode ~= "" then
+            AddScriptToCategory(SelectedCategory, SaveScriptName, SaveScriptDesc, SaveScriptCode)
+            Fluent:Notify({
+                Title = "Script Saved",
+                Content = "Saved '" .. SaveScriptName .. "' to " .. SelectedCategory .. "\nRejoin to see it in the list",
+                Duration = 4
+            })
+            SaveScriptName = ""
+            SaveScriptDesc = ""
+            SaveScriptCode = ""
+        else
+            Fluent:Notify({
+                Title = "Error",
+                Content = "Please enter script name and code!",
+                Duration = 3
+            })
+        end
+    end
+})
+
+Tabs.SaveScripts:AddParagraph({
+    Title = "Instructions",
+    Content = "1. Enter script name\n2. Enter description (optional)\n3. Paste your script code\n4. Select category (FE, Admin, Hub, R6, R15)\n5. Click 'Save Script'\n6. Rejoin to see your script"
+})
+
+------------------------------------------------------------
+-- Delete Scripts Tab (New)
+------------------------------------------------------------
+
+Tabs.DeleteScripts:AddParagraph({
+    Title = "Delete Scripts",
+    Content = "Remove scripts from any category"
+})
+
+-- Function to create delete dialog
+local function ShowDeleteConfirmation(categoryName, scriptIndex, scriptName)
+    local dialog = Window:Dialog({
+        Title = "Confirm Deletion",
+        Content = "Are you sure you want to delete '" .. scriptName .. "'?\nThis action cannot be undone.",
+        Buttons = {
+            {
+                Title = "Yes, Delete",
+                Callback = function()
+                    RemoveScriptFromCategory(categoryName, scriptIndex)
+                    Fluent:Notify({
+                        Title = "Script Deleted",
+                        Content = "Deleted: " .. scriptName .. "\nRejoin to refresh the list",
                         Duration = 3
                     })
                 end
-            end
-        end
+            },
+            {
+                Title = "Cancel",
+                Callback = function()
+                    Fluent:Notify({
+                        Title = "Cancelled",
+                        Content = "Script was not deleted",
+                        Duration = 2
+                    })
+                end
+            }
+        }
     })
+end
+
+-- FE Scripts Section
+if #ScriptCategories.FE > 0 then
+    Tabs.DeleteScripts:AddParagraph({
+        Title = "FE Scripts",
+        Content = "Click to delete"
+    })
+    
+    for index, info in ipairs(ScriptCategories.FE) do
+        Tabs.DeleteScripts:AddButton({
+            Title = "🗑️ " .. info.name,
+            Description = info.desc or "Click to delete this script",
+            Callback = function()
+                ShowDeleteConfirmation("FE", index, info.name)
+            end
+        })
+    end
+end
+
+-- Admin Scripts Section
+if #ScriptCategories.Admin > 0 then
+    Tabs.DeleteScripts:AddParagraph({
+        Title = "Admin Scripts",
+        Content = "Click to delete"
+    })
+    
+    for index, info in ipairs(ScriptCategories.Admin) do
+        Tabs.DeleteScripts:AddButton({
+            Title = "🗑️ " .. info.name,
+            Description = info.desc or "Click to delete this script",
+            Callback = function()
+                ShowDeleteConfirmation("Admin", index, info.name)
+            end
+        })
+    end
+end
+
+-- Hub Scripts Section
+if #ScriptCategories.Hub > 0 then
+    Tabs.DeleteScripts:AddParagraph({
+        Title = "Hub Scripts",
+        Content = "Click to delete"
+    })
+    
+    for index, info in ipairs(ScriptCategories.Hub) do
+        Tabs.DeleteScripts:AddButton({
+            Title = "🗑️ " .. info.name,
+            Description = info.desc or "Click to delete this script",
+            Callback = function()
+                ShowDeleteConfirmation("Hub", index, info.name)
+            end
+        })
+    end
+end
+
+-- R6 Scripts Section
+if #ScriptCategories.R6Troll > 0 then
+    Tabs.DeleteScripts:AddParagraph({
+        Title = "R6 Troll Scripts",
+        Content = "Click to delete"
+    })
+    
+    for index, info in ipairs(ScriptCategories.R6Troll) do
+        Tabs.DeleteScripts:AddButton({
+            Title = "🗑️ " .. info.name,
+            Description = info.desc or "Click to delete this script",
+            Callback = function()
+                ShowDeleteConfirmation("R6Troll", index, info.name)
+            end
+        })
+    end
+end
+
+-- R15 Scripts Section
+if #ScriptCategories.R15Troll > 0 then
+    Tabs.DeleteScripts:AddParagraph({
+        Title = "R15 Troll Scripts",
+        Content = "Click to delete"
+    })
+    
+    for index, info in ipairs(ScriptCategories.R15Troll) do
+        Tabs.DeleteScripts:AddButton({
+            Title = "🗑️ " .. info.name,
+            Description = info.desc or "Click to delete this script",
+            Callback = function()
+                ShowDeleteConfirmation("R15Troll", index, info.name)
+            end
+        })
+    end
 end
 
 ------------------------------------------------------------
 -- Info Tab
 ------------------------------------------------------------
 
-local InfoTab = Window:CreateTab("Info", "badge-info")
+Tabs.Info:AddParagraph({
+    Title = "Game Information",
+    Content = string.format(
+        "Game Name: %s\nGame ID: %d\nPlayer Name: %s\nPlayer ID: %d",
+        game.Name,
+        game.PlaceId,
+        player.Name,
+        player.UserId
+    )
+})
 
-InfoTab:CreateLabel("Game Name: " .. game.Name)
-InfoTab:CreateLabel("Game ID: " .. tostring(game.PlaceId))
-InfoTab:CreateLabel("Player Name: " .. player.Name)
-InfoTab:CreateLabel("Player ID: " .. tostring(player.UserId))
+Tabs.Info:AddParagraph({
+    Title = "Script Statistics",
+    Content = string.format(
+        "FE Scripts: %d\nAdmin Scripts: %d\nHub Scripts: %d\nR6 Scripts: %d\nR15 Scripts: %d\n\nTotal Scripts: %d",
+        #ScriptCategories.FE,
+        #ScriptCategories.Admin,
+        #ScriptCategories.Hub,
+        #ScriptCategories.R6Troll,
+        #ScriptCategories.R15Troll,
+        #ScriptCategories.FE + #ScriptCategories.Admin + #ScriptCategories.Hub + 
+        #ScriptCategories.R6Troll + #ScriptCategories.R15Troll
+    )
+})
 
 ------------------------------------------------------------
 -- Settings Tab
 ------------------------------------------------------------
 
-local SettingsTab = Window:CreateTab("Settings", "settings")
+local Themes = {
+    "Dark",
+    "Darker",
+    "Light",
+    "Rose",
+    "Aqua"
+}
 
-SettingsTab:CreateLabel("🎨 Theme Settings")
-
-SettingsTab:CreateButton({
-    Name = "💜 Cyberpunk (Purple & Pink)",
-    Callback = function()
-        ApplyTheme(1)
+Tabs.Settings:AddDropdown("ThemeDropdown", {
+    Title = "UI Theme",
+    Values = Themes,
+    Default = 2,
+    Callback = function(value)
+        Fluent:SetTheme(value)
     end
 })
 
-SettingsTab:CreateButton({
-    Name = "🌊 Ocean Blue",
-    Callback = function()
-        ApplyTheme(2)
+Tabs.Settings:AddToggle("AcrylicToggle", {
+    Title = "Acrylic Blur",
+    Default = true,
+    Callback = function(value)
+        Window:SetAcrylic(value)
     end
 })
 
-SettingsTab:CreateButton({
-    Name = "🌅 Sunset",
-    Callback = function()
-        ApplyTheme(3)
+Tabs.Settings:AddToggle("TransparencyToggle", {
+    Title = "Window Transparency",
+    Default = false,
+    Callback = function(value)
+        Window:SetTransparency(value and 0.5 or 1)
     end
 })
 
-SettingsTab:CreateButton({
-    Name = "🌲 Green Forest",
+Tabs.Settings:AddButton({
+    Title = "Clear All Scripts",
+    Description = "Delete all saved scripts (requires rejoin)",
     Callback = function()
-        ApplyTheme(4)
+        local dialog = Window:Dialog({
+            Title = "Clear All Scripts",
+            Content = "Are you sure you want to delete ALL scripts?\nThis will remove all custom scripts you've added.\nDefault scripts will be restored.",
+            Buttons = {
+                {
+                    Title = "Yes, Clear All",
+                    Callback = function()
+                        ScriptCategories = {
+                            FE = {},
+                            Admin = {},
+                            Hub = {},
+                            R6Troll = {},
+                            R15Troll = {}
+                        }
+                        SaveScriptData()
+                        Fluent:Notify({
+                            Title = "Scripts Cleared",
+                            Content = "All scripts deleted. Rejoin to restore defaults.",
+                            Duration = 5
+                        })
+                    end
+                },
+                {
+                    Title = "Cancel",
+                    Callback = function()
+                        Fluent:Notify({
+                            Title = "Cancelled",
+                            Content = "Scripts were not deleted",
+                            Duration = 2
+                        })
+                    end
+                }
+            }
+        })
     end
 })
 
-SettingsTab:CreateButton({
-    Name = "👑 Royal Gold",
-    Callback = function()
-        ApplyTheme(5)
-    end
+-- Setup SaveManager
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+
+SaveManager:IgnoreThemeSettings()
+InterfaceManager:SetFolder("FluentScriptHub")
+SaveManager:SetFolder("FluentScriptHub/configs")
+
+InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+SaveManager:BuildConfigSection(Tabs.Settings)
+
+Window:SelectTab(1)
+
+Fluent:Notify({
+    Title = "Hub Loaded",
+    Content = "ALL Game Hub v2.0 loaded successfully!",
+    Duration = 3
 })
